@@ -1,5 +1,6 @@
 const express=require('express');
 const SubCategory=require('../models/sub_category');
+const e = require('express');
 const subCategoryRouter=express.Router();
 
 subCategoryRouter.post('/api/subcategories',async(req,res)=>{
@@ -34,4 +35,14 @@ subCategoryRouter.get('/api/category/:categoryName/subcategories',async(req,res)
     res.status(500).json({error:e.message});
   }
 });
+
+
+subCategoryRouter.get('/api/subcategories',async (req,res)=>{
+  try {
+   const subcategories= await SubCategory.find();
+   return res.status(200).json({subcategories});
+  } catch (error) {
+    res.status(500).json({error:e.message});
+  }
+})
 module.exports=subCategoryRouter;
