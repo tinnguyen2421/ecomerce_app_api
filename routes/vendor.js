@@ -1,20 +1,19 @@
-const express =require("express");
-const User = require ('../models/user');
+const express=require('express');
+const Vendor=require('../models/vendor');
 const bcrypt=require('bcryptjs');
-const authRouter = express.Router();
+const VendorRouter=express.Router();
 const jwt=require ('jsonwebtoken');
 
-
-authRouter.post('/api/signup',async (req,res)=>{
+VendorRouter.post('/api/vendor/signup',async (req,res)=>{
     try {
         //get value from API
         const{fullName, email, password}=req.body;
         //find the email are corect with the email be sent and wait for the respond
         //save result in var existingEmail
-       const existingEmail= await User.findOne({email});
+       const existingEmail= await Vendor.findOne({email});
        if(existingEmail)
        {
-        return res.status(400).json({msg:"Email này đã được sử dụng"});
+        return res.status(400).json({msg:"email này đã được sử dụng"});
        }
        else
        {
@@ -24,11 +23,11 @@ authRouter.post('/api/signup',async (req,res)=>{
         const hashedPassword= await bcrypt.hash(password,salt);
         
         //creating new user 
-        let user=new User({fullName,email, password:hashedPassword});
+        let vendor=new Vendor({fullName,email, password:hashedPassword});
         // save results to MongoDB until the process completes
-        await user.save();
+        vendor=await vendor.save();
         //send respond to client
-        res.json({user});
+        res.json({vendor});
        }
     }
     catch (e)
@@ -36,14 +35,16 @@ authRouter.post('/api/signup',async (req,res)=>{
        res.status(500).json({error:e.message}); 
     }
 });
+
+
 //singing api endpoint 
-authRouter.post('/api/signin',async(req,res)=>{
+VendorRouter.post('/api/vendor/signin',async(req,res)=>{
     try{
        const {email,password}=req.body;
-       const findUser=await User.findOne({email});
+       const findUser=await Vendor.findOne({email});
 if (!findUser)
 {
-    return res.status(400).json({msg:"Người dùng không hợp lệ với email"})
+    return res.status(400).json({msg:"Người bán hàng không hợp lệ với email"})
 }
 else
 {
@@ -56,9 +57,9 @@ else
     {
       const token=jwt.sign({id:findUser._id},"PasswordKey");
       //remove sensitive information
-      const {password, ...userWithoutPassword}=findUser._doc;
+      const {password, ...vendorWithoutPassword}=findUser._doc;
       //send the respones
-      res.json({token,user:userWithoutPassword})
+      res.json({token,vendor:vendorWithoutPassword})
     }
 }
     }
@@ -67,4 +68,4 @@ else
     res.status(500).json({error:e.message});
     }
 })
-module.exports = authRouter;
+module.exports=VendorRouter;
