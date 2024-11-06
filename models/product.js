@@ -21,6 +21,14 @@ const productSchema=mongoose.Schema({
     type:String,
     required:true,
   },
+  vendorId:{
+    type:String,
+    required:true,
+  },
+  fullName:{
+    type:String,
+    required:true,
+  },
   subCategory:{
     type:String,
     required:true,
@@ -36,7 +44,16 @@ const productSchema=mongoose.Schema({
   recommend:{
     type:Boolean,
     default:false,
-  }
+  },
+  //add these fields for ratings
+  averageRating:{
+    type:Number,
+    default:0,
+  },
+  totalRatings:{
+    type:Number,
+    default:0,
+  },
 });
 const product=mongoose.model("Product",productSchema);
 module.exports=product;
